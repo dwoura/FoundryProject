@@ -51,9 +51,13 @@ contract NFTMarket {
         return listingNftId[nftAddr];
     }
 
-    function getGoodInfo(address nftAddr, uint nftId) public view returns(uint,uint,bool,address,address,uint){
+    function getGoodInfo(address nftAddr, uint nftId) public view returns(good memory){
         good memory nft = goods[nftAddr][nftId];
-        return (nft.id, nft.price, nft.isListing, nft.seller, nft.currency, nft.listingIndex);
+        return nft;
+    }
+
+    function getListingNftId(address nftAddr) public view returns(uint[] memory){ 
+        return listingNftId[nftAddr];
     }
 
     function list(address nftAddr, uint nftId,address currency,uint price) public returns(bool){
@@ -62,7 +66,6 @@ contract NFTMarket {
         // 2. listing中增加库存
         // 3. 上架状态
         require(price > 0,"price can not be set 0");
-        require(!goods[nftAddr][nftId].isListing,"nft is listing");
 
         // 用户approve nft，市场进行 transferFrom
         IERC721 erc721 = IERC721(nftAddr);
@@ -85,9 +88,10 @@ contract NFTMarket {
     }
 
     function buyNFT(address buyer,address wantedNftAddr, uint nftId) public returns(bool){
+        good memory wantedNft = goods[wantedNftAddr][nftId];
+        require(buyer!=wantedNft.seller,"buyer can't be the seller");
         _buyNFTWithoutTansferTokenToSeller(buyer, wantedNftAddr, nftId);
         // 若直接购买，需要市场执行transferFrom
-        good memory wantedNft = goods[wantedNftAddr][nftId];
         IERC20 erc20 = IERC20(wantedNft.currency);
         require(erc20.balanceOf(buyer) >= erc20.allowance(buyer, address(this)) && erc20.allowance(buyer, address(this)) >= wantedNft.price, "buyer has no enough erc20");
         bool success = erc20.transferFrom(buyer, wantedNft.seller, wantedNft.price); // 暂未设置手续费
