@@ -102,6 +102,7 @@ contract NFTMarket {
         good memory wantedNft = goods[wantedNftAddr][nftId];
         IERC20 erc20 = IERC20(wantedNft.currency);
         bool success = _buyNFTWithoutTansferTokenToSeller(buyer, wantedNftAddr, nftId);
+        require(success, "failed to call buyNFTWhenTokensReceived");
         erc20.transfer(wantedNft.seller, wantedNft.price);
 
         emit Sold(buyer, wantedNftAddr, nftId, wantedNft.seller, wantedNft.currency, wantedNft.price);
@@ -115,7 +116,6 @@ contract NFTMarket {
         //IERC721 wantedNft = IERC721(wantedNftAddr);
         require(listingNftId[wantedNftAddr].length>0, "no listing nft now");
         good storage wantedNft = goods[wantedNftAddr][nftId];
-        IERC20 erc20 = IERC20(wantedNft.currency);
         require(wantedNft.isListing, "this nft is unlisted");
         // nft卖出前先交换到末尾再删除
         uint[] storage listingNftIds = listingNftId[wantedNftAddr];
@@ -130,6 +130,7 @@ contract NFTMarket {
         // 市场转出 nft 给买家
         IERC721 erc721 = IERC721(wantedNftAddr);
         erc721.transferFrom(address(this),buyer,wantedNft.id);
+        return true;
         // 市场转出 token给卖家
     }
 
