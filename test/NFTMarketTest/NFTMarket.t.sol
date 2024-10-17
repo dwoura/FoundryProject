@@ -173,23 +173,6 @@ contract NFTMarketTest is NFTMarket,Test {
         vm.stopPrank();
     }
 
-    // function testInvariantNFTMarketHasNoToken() public {
-    //     // 1. 模拟卖家上架NFT
-    //     vm.startPrank(seller);
-    //     nftMarket.list(nftAddr, testNftId, erc20HookAddr, testPrice);
-    //     vm.stopPrank();
-
-    //     // 2. 模拟买家进行购买
-    //     vm.startPrank(buyer);
-    //     vm.mockCall(erc20Addr, abi.encodeWithSelector(mockERC20.balanceOf.selector, buyer), abi.encode(price));
-    //     vm.mockCall(erc20Addr, abi.encodeWithSelector(mockERC20.allowance.selector, buyer, address(nftMarket)), abi.encode(price));
-    //     nftMarket.buyNFT(buyer, nftAddr, nftId);
-    //     vm.stopPrank();
-
-    //     // 验证 NFTMarket 合约内的 ERC20 代币余额为 0
-    //     assertEq(mockERC20.balanceOf(address(nftMarket)), 0, "NFTMarket contract should not hold any tokens.");
-    // }
-
     // 模糊测试
     function testFuzz_ListAndBuy(uint256 amount, address randomBuyer) public {
         // 范围控制
