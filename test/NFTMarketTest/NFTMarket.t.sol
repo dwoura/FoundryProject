@@ -48,10 +48,6 @@ contract NFTMarketTest is NFTMarket,Test {
         
     // }
 
-    function doList(uint nftId, uint listPrice) internal{
-
-    }
-
     function test_ListSuccess() public {
         vm.startPrank(seller);
         erc721.mint(seller, "seller");
@@ -177,7 +173,7 @@ contract NFTMarketTest is NFTMarket,Test {
     function testFuzz_ListAndBuy(uint256 amount, address randomBuyer) public {
         // 范围控制
         vm.assume(amount > 0 && amount <= 10000);
-        vm.assume(randomBuyer != address(0));
+        vm.assume(randomBuyer != address(0) && randomBuyer != seller);
 
         // 卖家上架NFT
         vm.startPrank(seller);
