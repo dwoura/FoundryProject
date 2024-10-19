@@ -3,7 +3,8 @@ src = "src"
 out = "out"
 libs = ["lib"]
 solc = "0.8.26"
-rpc-url = "http://127.0.0.1:8545"
-# rpc_endpoints = ""
+
+[rpc_endpoints]
+sepolia = "https://eth-sepolia.g.alchemy.com/v2/ozWVNCbqDXI4BIRxUQtKjpNkJpU1Iy8w"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

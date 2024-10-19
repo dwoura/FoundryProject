@@ -8,7 +8,7 @@ cast 与 forge 不同，是用于与以太坊合约进行交互的工具。
 # 部署和开源
 ## 部署
 一般有两种方式，可以通过命令 `forge create` 或 `forge script` 来部署，但后者需要编写脚本。
-+ forge create  
++ `forge create`  
 通过 `路径:合约名` 的形式找到需要部署的合约  
 `forge create src/MyContract.sol:MyContract --private-key 私钥 --rpc-url xxx`   
 若部署的合约需要携带构造函数参数，可在其后面添加`--constructor-args xxx xxx`来输入参数。  
@@ -16,7 +16,7 @@ cast 与 forge 不同，是用于与以太坊合约进行交互的工具。
 也可以使用 --account 来替换私钥参数
 `forge create src/MyContract.sol:MyContract --account xxx --rpc-url xxx`   
 如果需要简化输入合约的路径，也可以在 remappings 中添加一个键值对做个映射。
-+ forge script  
++ `forge script`  
 在脚本合约中，我们通过`new`合约的方式来创建（部署）一个合约实例，  
 完整脚本如下：
 ```solidity
@@ -41,11 +41,12 @@ contract Deploy is Script {
 -vvvv: 输出详细的调试信息  
 
 ## 开源
-只需要在命令中添加 `--verify` 参数即可
+只需要在命令中添加 `--verify` 参数即可，会自动使用env中的`ETHERSCAN_API_KEY`
 
 ## 一些注意事项
 + 使用 `--account` 参数，通过 keyStore 可以避免使用明文私钥，保证安全性。
 + 脚本的`vm.broadcast` 与命令中的`--broadcast`不一样，前者是模拟广播交易，而**后者才是实际在链上广播交易**。  
 + **建议每次运行前运行 forge clean命令，清除缓存**  
 `ERROR foundry_compilers_artifacts_solc::sources: error=`的错误就是因为缓存问题引起的。
-+ 每次部署都要指定 `--rpc-url` 参数，foundry.toml中的rpc-url映射不会被使用。
++ `forge create`的--rpc-url 是通过读 .env 文件中的`ETH_RPC_URL`，而 forge script 的--rpc-url 需要 `foundry.toml` 文件中的`rpc_endpoints`下自定义的rpc-url变量。  
+可见，通过`forge script`的方式进行部署，可以很方便地选择定义好的rpc网络，而不需要反复地在`ETH_RPC_URL` 设置值rpc地址。
