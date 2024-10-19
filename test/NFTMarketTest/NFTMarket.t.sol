@@ -172,7 +172,7 @@ contract NFTMarketTest is NFTMarket,Test {
     // 模糊测试
     function testFuzz_ListAndBuy(uint256 amount, address randomBuyer) public {
         // 范围控制
-        vm.assume(amount > 0 && amount <= 10000);
+        vm.assume(amount >= 0.01 ether && amount <= 10000 ether);
         vm.assume(randomBuyer != address(0) && randomBuyer != seller);
 
         // 卖家上架NFT
