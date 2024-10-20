@@ -170,10 +170,14 @@ contract NFTMarketTest is NFTMarket,Test {
     }
 
     // 模糊测试
+    /**
+        forge-config:default.fuzz.runs=256
+        forge-config:default.fuzz.max-test-rejects=50000
+    */
     function testFuzz_ListAndBuy(uint256 amount, address randomBuyer) public {
         // 范围控制
         vm.assume(amount >= 0.01 ether && amount <= 10000 ether);
-        vm.assume(randomBuyer != address(0) && randomBuyer != seller);
+        vm.assume(randomBuyer != address(0) && randomBuyer != seller); // 买家不能是卖家
 
         // 卖家上架NFT
         vm.startPrank(seller);

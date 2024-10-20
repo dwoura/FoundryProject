@@ -42,8 +42,26 @@ contract Deploy is Script {
 -vvvv: 输出详细的调试信息  
 
 ## 开源
-只需要在命令中添加 `--verify` 参数即可，会自动使用env中的`ETHERSCAN_API_KEY`
-
++ 部署的同时开源  
+我们只需要在命令中添加 `--verify` 参数即可。对于`forge create`， 会自动使用env中的`ETHERSCAN_API_KEY`参数；  
+而对于 `forge script` 则是使用到了`forge.toml` 文件中的 `[rpc-endpoints]`下的自定义变量。
++ 部署完成后开源  
+使用 `forge verify-contract 合约地址 合约路径:合约名 --chain 链名`。  
+**若要为带有构造函数参数的合约开源**，需要注意使用参数`--constructor-args`，**参数用到构造函数的字节码**。  
+假设我们有一个合约如下
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.26;
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+contract MyToken is ERC20 { 
+    constructor(string memory name_, string memory symbol_) ERC20(name_, symbol_) {
+        _mint(msg.sender, 1e10*1e18);
+    } 
+}
+```  
+我们可以通过`cast abi-encode(constructor(string memory name_, string memory symbol_)) xxx xxx` 来获取字节码，其中的 xxx 是已部署合约的两个函数参数。  
+`forge verify-contract 合约地址 合约路径:合约名 --chain 链名 --constructor-args 生成的字节码`。  
+或者在cast的时候输出到一个文件中`> data.txt`，改为使用参数 `--constructor-args-path data.txt`。
 ## 一些注意事项
 + 使用 `--account` 参数，通过 keyStore 可以避免使用明文私钥，保证安全性。
 + 脚本的`vm.broadcast` 与命令中的`--broadcast`不一样，前者是模拟广播交易，而**后者才是实际在链上广播交易**。  
