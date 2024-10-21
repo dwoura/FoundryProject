@@ -59,7 +59,7 @@ contract MyToken is ERC20 {
     } 
 }
 ```  
-我们可以通过`cast abi-encode(constructor(string memory name_, string memory symbol_)) xxx xxx` 来获取字节码，其中的 xxx 是已部署合约的两个函数参数。  
+我们可以通过`cast abi-encode "constructor(string memory name_, string memory symbol_)" "xxx" "xxx"` 来获取字节码，其中的 xxx 是已部署合约的两个函数参数。  
 `forge verify-contract 合约地址 合约路径:合约名 --chain 链名 --constructor-args 生成的字节码`。  
 或者在cast的时候输出到一个文件中`> data.txt`，改为使用参数 `--constructor-args-path data.txt`。
 ## 一些注意事项

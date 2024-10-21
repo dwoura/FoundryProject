@@ -19,14 +19,20 @@ contract TokenBank is IBank {
 
     receive () external payable{}
 
-    function deposit(IERC20 token, uint amount) public payable override {
+    modifier OnlyOwner{
+        require(msg.sender==owner, "only owner can do this");
+        _;
+    }
+
+    function deposit(IERC20 token, uint amount) public override {
         // call erc20
         // check allowance
         require(amount>0,"amount is empty");
+        require(token.balanceOf(msg.sender) >= amount, "allowance is not enough");
         bool success;
 
         // transferFrom msg.sender to bank
-        success = token.transferFrom(payable(msg.sender),payable(address(this)),amount);
+        success = token.transferFrom(msg.sender,address(this),amount);
         require(success, "failed to call transferFrom");
         // update user info
         updateUserInfo(msg.sender, token, amount);
@@ -35,7 +41,7 @@ contract TokenBank is IBank {
     function updateUserInfo(address user, IERC20 token, uint amount) internal {
         bool isExistInAssets;
         for(uint i=0;i<users[user].assets.length;i++){
-            if(isExistInAssets){
+            if(users[user].assets[i] == token){
                 isExistInAssets = true;
                 break;
             }
@@ -43,25 +49,32 @@ contract TokenBank is IBank {
         if(!isExistInAssets){
             users[user].assets.push(token);
         }
-
         users[user].balancesOf[token] += amount;
     }
 
     function withdraw(IERC20 token, uint amount) public payable override {
         // admin can withdraw all token
         if(msg.sender == owner){
-            bool success = token.approve(msg.sender, amount);
-            require(success,"failed to approve");
+            require(token.balanceOf(address(this))>=amount,"amount must be greater than balance of this contract");
             token.transfer(owner,amount);
             return;
         }
         uint availAmount = users[msg.sender].balancesOf[token];
         require(availAmount >= amount, "available amount is not enough");
         token.transfer(msg.sender,amount);
-        users[msg.sender].balancesOf[token] -= 1;
+        users[msg.sender].balancesOf[token] -= amount;
     }
 
     function getBalancesOfMsgSender(IERC20 token) public view returns(uint){
         return users[msg.sender].balancesOf[token];
+    }
+
+    function getBalancesOf(address addr,IERC20 token) public view returns(uint){
+        return users[addr].balancesOf[token];
+    }
+
+    function transferOwnership(address to) public OnlyOwner{
+        require(msg.sender!=address(0), "msgsender is wrong");
+        owner = to;
     }
 }

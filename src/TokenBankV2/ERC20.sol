@@ -18,8 +18,8 @@ contract BaseERC20{
     constructor() {
         // write your code here
         // set name,symbol,decimals,totalSupply
-        name = "BaseERC20";
-        symbol = "BERC20";
+        name = "Dwoura";
+        symbol = "Dwoura";
         decimals = 18;
         totalSupply = 100000000 ether;
         balances[msg.sender] = totalSupply;

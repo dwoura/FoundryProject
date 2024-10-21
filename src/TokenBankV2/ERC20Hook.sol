@@ -19,7 +19,7 @@ contract ERC20Hook is BaseERC20, ERC165{
     }
 
     // 带钩子函数的转账
-    function transferWithCallback(address _to,uint _amount) public returns(bool){
+    function transferWithCallback(address _to,uint _amount,bytes memory data) public returns(bool){
         bool success;
         success = transfer(_to, _amount);
         require(success, "failed to transfer token");
@@ -28,8 +28,7 @@ contract ERC20Hook is BaseERC20, ERC165{
             return true;
         }
         // 若为合约地址，转账后调用其tokensReceived()方法
-        ////bytes memory data = abi.encode(data);
-        success = ITokenReceiver(_to).tokensReceived(msg.sender,msg.sender,_amount,"0x");
+        success = ITokenReceiver(_to).tokensReceived(msg.sender,msg.sender,_amount,data);
         require(success, "failed to call tokensReceived()");
         return true;
     }

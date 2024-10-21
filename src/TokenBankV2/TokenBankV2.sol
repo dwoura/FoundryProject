@@ -9,7 +9,7 @@ import "./ITokenReceiver.sol";
 
 contract TokenBankV2 is TokenBank,ITokenReceiver {
     // 限定只能存取某种代币
-    address _supportedToken;
+    address public _supportedToken; // 未来优化为数组
     constructor(address supportedToken_) {
         _supportedToken = supportedToken_;
     }
@@ -19,6 +19,10 @@ contract TokenBankV2 is TokenBank,ITokenReceiver {
         //(address token) = abi.decode(data,(address));
         updateUserInfo(from, IERC20(msg.sender), value);
         return true;
+    }
+
+    function setSupportedToken(address supportedToken_) public OnlyOwner{
+        _supportedToken = supportedToken_;
     }
 }
 
