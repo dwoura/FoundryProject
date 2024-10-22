@@ -2,7 +2,6 @@
 pragma solidity ^0.8.26;
 
 contract Multisig{
-    
     address[] public _owners;
     uint public _threshold;
 
@@ -10,13 +9,13 @@ contract Multisig{
         uint id;
         address to;
         bytes data;
-        uint value; // 发送的 eth value
-        uint confirmations; // 已签名数量
+        uint value; // eth value to send
+        uint confirmations; // total nums of confirmations
         bool isExecuted;
     }
 
-    mapping(uint=>Proposal) public proposals; // id到提案的映射
-    uint public proposalNums; //提案数量
+    mapping(uint=>Proposal) public proposals;
+    uint public proposalNums; // total nums
 
 
     modifier OnlyOwners{
@@ -48,12 +47,12 @@ contract Multisig{
     function confirmProposal(uint proposalId) public OnlyOwners payable {
         require(proposalId<=proposalNums, "can not confirm a proposal id greater than nums");
         Proposal storage proposal =  proposals[proposalId];
-        // 不可确认一个已执行的提案
+
         require(proposal.isExecuted == false, "can not confirm a executed proposal"); 
         proposal.confirmations++;
 
-        // 达到确认阈值时执行
-        if(proposal.confirmations == _threshold){
+        // exe when meet threshold
+        if(proposal.confirmations >= _threshold){
             executeProposal(proposalId);
         }
     }
