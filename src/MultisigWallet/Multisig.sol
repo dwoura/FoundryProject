@@ -45,20 +45,16 @@ contract Multisig{
     }
 
     function confirmProposal(uint proposalId) public OnlyOwners payable {
-        require(proposalId<=proposalNums, "can not confirm a proposal id greater than nums");
+        require(proposalId<= proposalNums, "no this proposal");
         Proposal storage proposal =  proposals[proposalId];
 
         require(proposal.isExecuted == false, "can not confirm a executed proposal"); 
         proposal.confirmations++;
-
-        // exe when meet threshold
-        if(proposal.confirmations >= _threshold){
-            executeProposal(proposalId);
-        }
     }
 
-    function executeProposal(uint proposalId) internal{
+    function executeProposal(uint proposalId) public{
         Proposal storage proposal =  proposals[proposalId];
+        require(proposal.confirmations >= _threshold, "confirmations num too low");
 
         (bool success,) = proposal.to.call{value: proposal.value}(proposal.data);
         require(success,"failed to call target function");
