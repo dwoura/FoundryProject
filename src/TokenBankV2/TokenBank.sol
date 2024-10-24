@@ -13,6 +13,8 @@ contract TokenBank is IBank {
     }
     mapping(address=>User) internal users;
 
+    event Deposit(address indexed user, uint256 amount);
+    event Withdraw(address indexed user, uint256 amount);
     constructor(){
         owner = msg.sender;
     }
@@ -24,18 +26,18 @@ contract TokenBank is IBank {
         _;
     }
 
-    function deposit(IERC20 token, uint amount) public override {
+    function deposit(address depositor,IERC20 token, uint amount) public {
         // call erc20
         // check allowance
         require(amount>0,"amount is empty");
-        require(token.balanceOf(msg.sender) >= amount, "allowance is not enough");
+        require(token.allowance(depositor, address(this)) >= amount, "allowance is not enough");
+        
         bool success;
-
         // transferFrom msg.sender to bank
-        success = token.transferFrom(msg.sender,address(this),amount);
+        success = token.transferFrom(depositor,address(this),amount);
         require(success, "failed to call transferFrom");
         // update user info
-        updateUserInfo(msg.sender, token, amount);
+        updateUserInfo(depositor, token, amount);
     }
 
     function updateUserInfo(address user, IERC20 token, uint amount) internal {
@@ -70,6 +72,7 @@ contract TokenBank is IBank {
     }
 
     function getBalancesOf(address addr,IERC20 token) public view returns(uint){
+        //IERC20 itoken = IERC20(token);
         return users[addr].balancesOf[token];
     }
 

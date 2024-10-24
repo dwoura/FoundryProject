@@ -45,6 +45,7 @@ contract Multisig{
     }
 
     function confirmProposal(uint proposalId) public OnlyOwners payable {
+        // todo: 处理重复确认的问题
         require(proposalId<= proposalNums, "no this proposal");
         Proposal storage proposal =  proposals[proposalId];
 

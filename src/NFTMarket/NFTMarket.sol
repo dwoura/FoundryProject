@@ -138,18 +138,19 @@ contract NFTMarket {
         // 市场转出 token给卖家
     }
 
+    // nft地址和 tokenid 封装在 data，可从 data 中取出
     function tokensReceived(address, address from, uint value, bytes calldata data) public returns(bool){
         // 注意限定交易该 nft 使用的token
         // 解码携带的字节码 data 获取想要购买的 nft 地址。
-        address wantedNftAddr = abi.decode(data, (address));
-        uint[] memory listingNftIds = listingNftId[wantedNftAddr];
-        good memory wantedNft = goods[wantedNftAddr][listingNftIds[listingNftIds.length-1]]; // 获取上架区的末尾nft
+        (address wantedNftAddr, uint tokenId )= abi.decode(data, (address,uint));
+
+        good memory wantedNft = goods[wantedNftAddr][tokenId]; 
         require(msg.sender == wantedNft.currency, "don't support this currency"); // 限定支持购买该种 nft 的货币
 
         //转账erc20给 market 合约，触发tokensReceived()进来自动购买，listing pop。
-        require(listingNftIds.length>0,"none of this nft address is listing");
+        require(wantedNft.isListing, "none of this nft address is listing");
         require(value >= wantedNft.price, "buyer has no enough erc20");
-        buyNFTWhenTokensReceived(from,wantedNftAddr,listingNftIds[listingNftIds.length-1]); //暂时默认购买 listing 最后一个
+        buyNFTWhenTokensReceived(from,wantedNftAddr, tokenId); //暂时默认购买 listing 最后一个
         return true;
     }
 }

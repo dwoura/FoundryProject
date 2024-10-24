@@ -6,6 +6,7 @@ import "./IERC20.sol";
 import "./TokenBank.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "./ITokenReceiver.sol";
+import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 
 contract TokenBankV2 is TokenBank,ITokenReceiver {
     // 限定只能存取某种代币
@@ -13,7 +14,7 @@ contract TokenBankV2 is TokenBank,ITokenReceiver {
     constructor(address supportedToken_) {
         _supportedToken = supportedToken_;
     }
-    // 代币转账到合约后触发该函数，使得合约能够记账。省去了用户 approve 和 deposit 的操作
+
     function tokensReceived(address, address from, uint value, bytes calldata) public returns(bool){
         require(msg.sender == _supportedToken, "not a supported token");
         //(address token) = abi.decode(data,(address));
@@ -24,6 +25,34 @@ contract TokenBankV2 is TokenBank,ITokenReceiver {
     function setSupportedToken(address supportedToken_) public OnlyOwner{
         _supportedToken = supportedToken_;
     }
-}
 
-// 若希望bank里能存取不同协议的代币，使用 erc165
+
+
+    struct Permit {
+        address owner;
+        address spender;
+        uint256 value;
+        uint256 nonce;
+        uint256 deadline;
+    }
+
+    // Business scenario (data can be assumed in tests)
+    // 1. Generate signature from users
+    // User can input args: spender,value,deadline on dapp which use something like ethers.js to build eip712 typed structed data
+    // and call method eth_signTypedData_v4 then request user to sign on Metamask.
+    // 2. Users confirm their signature
+    // Metamask returns signature data v,r,s for dapp after users confirmed
+    // 3. Call func permitDeposit
+    // Dapp carry the v,r,s data and other args to call permitDeposit function
+    // 4. Contract and asset verification
+    // TokenBank call permit from IERC20Permit to verify signature effectiveness, and then call transferFrom.
+    //
+    // user signature -> build typed structed data -> v,r,s data -> call permit -> transferFrom
+    function permitDeposit(address depositor, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) public {
+        IERC20Permit tokenPermit = IERC20Permit(_supportedToken);
+        tokenPermit.permit(depositor, address(this), value, deadline, v, r, s); // do approve
+
+        deposit(depositor, IERC20(address(tokenPermit)), value);
+        emit Deposit(depositor, value);
+    }
+}
