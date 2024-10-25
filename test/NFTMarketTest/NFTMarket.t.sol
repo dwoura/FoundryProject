@@ -107,7 +107,7 @@ contract NFTMarketTest is NFTMarket,Test {
         vm.expectEmit(true, true, true, true);
         emit Sold(buyer, nftAddr, testNftId, seller, erc20HookAddr, testPrice);
 
-        bytes memory data = abi.encode(nftAddr);
+        bytes memory data = abi.encode(nftAddr,testNftId);
         erc20Hook.transferWithCallback(nftMarketAddr, testPrice, data); // 假设发送了正好足够的token
 
         vm.stopPrank();
@@ -163,7 +163,7 @@ contract NFTMarketTest is NFTMarket,Test {
         vm.startPrank(buyer);
         deal(erc20HookAddr,buyer, testPrice - 10);
 
-        vm.expectRevert("buyer has no enough erc20");
+        vm.expectRevert("buyer has no enough erc20 or allowance");
         nftMarket.buyNFT(buyer, nftAddr, testNftId);
 
         vm.stopPrank();

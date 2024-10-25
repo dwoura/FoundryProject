@@ -2,12 +2,14 @@
 pragma solidity ^0.8.26;
 
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {EIP712} from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import {IERC20} from "./IERC20.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "./ITokenReceiver.sol";
 import "forge-std/console.sol";
+import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 
-contract NFTMarket {
+contract NFTMarket is EIP712{
     // 定义TokenReceiver的接口id, 用于查询 token 是否支持此接口
     bytes4 private constant tokenReceiverInterfaceId = type(ITokenReceiver).interfaceId;
 
@@ -24,6 +26,20 @@ contract NFTMarket {
         uint listingIndex; // 上架区的索引
     }
     mapping(address=>mapping(uint=>good)) goods; //nft上架信息
+
+    // EIP712
+    struct WhiteList {
+        address user;          // 白名单用户的地址
+        address nftAddr;       // 允许购买的 nft
+        uint256 buyLimit;      // 购买数量
+        uint256 deadline;      // 签名的有效期
+    }
+    bytes32 DOMAIN_SEPARATOR;
+    bytes32 WHITELIST_TYPEHASH = keccak256("WhiteList(address user,address nftAddr,uint256 buyLimit,uint256 deadline)");
+
+    mapping(address=>mapping(address=>uint256)) buyLimitMap; // nft buying limit
+
+    error InvalidSignature(address signer, address whitelistAddr);
 
     event List(
         address indexed seller,
@@ -43,8 +59,19 @@ contract NFTMarket {
         uint price
     );
 
-    constructor(){
+    constructor() EIP712("NFTMarket", "1"){
         owner = msg.sender;
+
+        DOMAIN_SEPARATOR = getDomainSeparator(); // set domain separator
+    }
+
+    // eip712
+    function getDomainSeparator() public view returns(bytes32){
+        return _domainSeparatorV4();
+    }
+
+    function getWhiteListTypeHash() public view returns(bytes32){
+        return WHITELIST_TYPEHASH;
     }
 
     function getListing(address nftAddr) public view returns(uint[] memory){
@@ -87,13 +114,50 @@ contract NFTMarket {
         return true;
     }
 
+    // new func
+    function permitBuy(uint tokenId, WhiteList memory whitelist, uint8 v, bytes32 r, bytes32 s) public {
+        // 
+        require(block.timestamp <= whitelist.deadline, "Signature expired");
+        
+        // 拿参数包装白名单成712结构的 data，如果能够和 vrs 一起恢复出项目方钱包地址，说明确实是项目方签名过的白名单用户。
+        // 实际上就是需要一份相同信息的明文去匹配暗文，提取并判断谁签署的暗文
+        // _hashTypedDataV4, to struct data, is from EIP712.sol
+        bytes32 digest = _hashTypedDataV4(keccak256(abi.encode( 
+            keccak256("WhiteList(address user,address nftAddr,uint256 buyLimit,uint256 deadline)"),
+            whitelist.user,
+            whitelist.nftAddr,
+            whitelist.buyLimit,
+            whitelist.deadline
+        )));
+
+        // verify sig is signed from developer
+        address signer = ecrecover(digest, v, r, s);
+        if(signer != owner){
+            revert InvalidSignature(signer, whitelist.user);
+        }
+
+        uint256 userBuyingNums = buyLimitMap[whitelist.user][whitelist.nftAddr];
+        require(userBuyingNums < whitelist.buyLimit, "buying limit");
+
+        // decode permit sig and call erc20 permit to verify sig
+        //good memory wantedNft= goods[whitelist.nftAddr][tokenId];
+        //IERC20Permit itoken = IERC20Permit(address(wantedNft.currency));
+        //itoken.permit(msg.sender, address(this), wantedNft.price, whitelist.deadline, pv, pr, ps); // do approve here
+
+        bool success = buyNFT(whitelist.user, whitelist.nftAddr, tokenId);
+        require(success, "failed to buy NFT");
+
+        userBuyingNums++;
+
+    }
+
     function buyNFT(address buyer,address wantedNftAddr, uint nftId) public returns(bool){
         good memory wantedNft = goods[wantedNftAddr][nftId];
         require(buyer!=wantedNft.seller,"buyer can't be the seller");
         _buyNFTWithoutTansferTokenToSeller(buyer, wantedNftAddr, nftId);
         // 若直接购买，需要市场执行transferFrom
         IERC20 erc20 = IERC20(wantedNft.currency);
-        require(erc20.balanceOf(buyer) >= erc20.allowance(buyer, address(this)) && erc20.allowance(buyer, address(this)) >= wantedNft.price, "buyer has no enough erc20");
+        require(erc20.balanceOf(buyer) >= erc20.allowance(buyer, address(this)) && erc20.allowance(buyer, address(this)) >= wantedNft.price, "buyer has no enough erc20 or allowance");
         bool success = erc20.transferFrom(buyer, wantedNft.seller, wantedNft.price); // 暂未设置手续费
         require(success, "failed to transfer token to seller");
 
@@ -117,8 +181,6 @@ contract NFTMarket {
         // 下架状态
         // 最后，市场转出nft给买家，市场转出token给卖家
 
-        //IERC721 wantedNft = IERC721(wantedNftAddr);
-        require(listingNftId[wantedNftAddr].length>0, "no listing nft now");
         good storage wantedNft = goods[wantedNftAddr][nftId];
         require(wantedNft.isListing, "this nft is unlisted");
         // nft卖出前先交换到末尾再删除

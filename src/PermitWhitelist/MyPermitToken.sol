@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract MyPermitToken is IERC20, ERC20Permit{
 
-    // eip712 necessary
+    // eip712 necessary   or using _hashTypedDataV4 in eip712.sol
     struct EIP712Domain {
         string name;
         string version;
@@ -17,7 +17,6 @@ contract MyPermitToken is IERC20, ERC20Permit{
     }
     bytes32 PERMIT_TYPEHASH = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
     bytes32 constant EIP712DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
-    bytes32 public override DOMAIN_SEPARATOR;
 
     struct Permit {
         address owner;
@@ -28,27 +27,10 @@ contract MyPermitToken is IERC20, ERC20Permit{
     }
 
     constructor() ERC20("DwouraPermit","DwPmt") ERC20Permit("DwouraPermit"){
-        _mint(msg.sender, 1000000000000);
-
-        // eip712: setup DOMAIN_SEPARATOR
-        DOMAIN_SEPARATOR = _hashStruct(
-            EIP712Domain({name: "DwouraPermit", version: "1", chainId: block.chainid, verifyingContract: address(this)}) // !! this is struct instantiation for type EIP712Domain
-        );
+        _mint(msg.sender, 1000000000 ether);
     }
 
-    // this func could be overload by multi same name 
-    function _hashStruct(EIP712Domain memory eip712Domain) internal pure returns(bytes32){
-        // to pack the format required by EIP712 struct
-        return keccak256(
-            abi.encode(
-            EIP712DOMAIN_TYPEHASH,
-            keccak256(bytes(eip712Domain.name)),
-            keccak256(bytes(eip712Domain.version)),
-            eip712Domain.chainId,
-            eip712Domain.verifyingContract
-            )
-        );
-    }
+    // inherent DOMAIN_SEPARATOR() could be used.
 
     // aborted: new func is trasnferWithPermit
     // function transferWithSignature(

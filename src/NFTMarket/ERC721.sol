@@ -8,11 +8,11 @@ contract MyERC721 is ERC721URIStorage {
 
     constructor() ERC721(unicode"Wensili", "Dwoura") {}
 
-    function mint(address student, string memory tokenURI) public returns (uint256) {
+    function mint(address to, string memory tokenURI) public returns (uint256) {
         _tokenIds+=1;
 
         uint256 newItemId = _tokenIds;
-        _mint(student, newItemId);
+        _mint(to, newItemId);
         _setTokenURI(newItemId, tokenURI);
 
         return newItemId;
