@@ -17,6 +17,8 @@ contract Multisig{
     mapping(uint=>Proposal) public proposals;
     uint public proposalNums; // total nums
 
+    mapping(address=>mapping(id=>bool)) isConfirmed;
+
 
     modifier OnlyOwners{
         require(isExistInOwners(), "only owner can do this");
@@ -45,8 +47,8 @@ contract Multisig{
     }
 
     function confirmProposal(uint proposalId) public OnlyOwners payable {
-        // todo: 处理重复确认的问题
         require(proposalId<= proposalNums, "no this proposal");
+        require(isConfirmed[msg.sender][proposalId] == false, "this owner was confirmed"); // fix: repeat confirm
         Proposal storage proposal =  proposals[proposalId];
 
         require(proposal.isExecuted == false, "can not confirm a executed proposal"); 
