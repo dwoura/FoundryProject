@@ -7,12 +7,21 @@ import "./TokenBank.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "./ITokenReceiver.sol";
 import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
+import {IPermit2} from "@uniswap/permit2/interfaces/IPermit2.sol";
 
 contract TokenBankV2 is TokenBank,ITokenReceiver {
     // 限定只能存取某种代币
-    address public _supportedToken; // 未来优化为数组
+    address public _supportedToken; // 未来可优化为数组
+
+    // 指定 permit2 合约
+    address public _supportedPemit2;
     constructor(address supportedToken_) {
         _supportedToken = supportedToken_;
+    }
+
+    // 初始化 permit2 合约地址
+    function init(address supportedPemit2_) public OnlyOwner(){
+        _supportedPemit2 = supportedPemit2_;
     }
 
     function tokensReceived(address, address from, uint value, bytes calldata) public returns(bool){
@@ -25,8 +34,6 @@ contract TokenBankV2 is TokenBank,ITokenReceiver {
     function setSupportedToken(address supportedToken_) public OnlyOwner{
         _supportedToken = supportedToken_;
     }
-
-
 
     struct Permit {
         address owner;
@@ -52,13 +59,19 @@ contract TokenBankV2 is TokenBank,ITokenReceiver {
         IERC20Permit tokenPermit = IERC20Permit(_supportedToken);
         tokenPermit.permit(depositor, address(this), value, deadline, v, r, s); // do approve
 
-        deposit(depositor, IERC20(address(tokenPermit)), value);
+        deposit(depositor, IERC20(address(_supportedToken)), value);
         emit Deposit(depositor, value);
     }
 
     
     // you need to deploy Permit2 contract first on local testnet
-    function depositWithPermit2() public {
+    function depositWithPermit2(address depositor, IPermit2.PermitTransferFrom memory permitMsg , IPermit2.SignatureTransferDetails memory details,bytes calldata signature) public {
+        // 使用permit2签名授权转账来存款
+        require(_supportedPemit2 != address(0), "you need to init contract first");
+        IPermit2 ipermit2 = IPermit2(_supportedPemit2);
+        ipermit2.permitTransferFrom(permitMsg,details,depositor, signature);
 
+        updateUserInfo(depositor, IERC20(address(_supportedToken)), details.requestedAmount);
+        emit Deposit(depositor, details.requestedAmount);
     }
 }

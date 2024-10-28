@@ -17,7 +17,7 @@ contract Multisig{
     mapping(uint=>Proposal) public proposals;
     uint public proposalNums; // total nums
 
-    mapping(address=>mapping(id=>bool)) isConfirmed;
+    mapping(address=>mapping(uint=>bool)) isConfirmed;
 
 
     modifier OnlyOwners{
