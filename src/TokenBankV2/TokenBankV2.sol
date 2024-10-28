@@ -55,4 +55,10 @@ contract TokenBankV2 is TokenBank,ITokenReceiver {
         deposit(depositor, IERC20(address(tokenPermit)), value);
         emit Deposit(depositor, value);
     }
+
+    
+    // you need to deploy Permit2 contract first on local testnet
+    function depositWithPermit2() public {
+
+    }
 }
