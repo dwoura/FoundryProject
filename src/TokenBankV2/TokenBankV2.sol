@@ -20,7 +20,7 @@ contract TokenBankV2 is TokenBank,ITokenReceiver {
     }
 
     // 初始化 permit2 合约地址
-    function init(address supportedPemit2_) public OnlyOwner(){
+    function init(address supportedPemit2_) public OnlyOwner{
         _supportedPemit2 = supportedPemit2_;
     }
 

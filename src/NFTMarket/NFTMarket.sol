@@ -139,10 +139,11 @@ contract NFTMarket is EIP712{
         uint256 userBuyingNums = buyLimitMap[whitelist.user][whitelist.nftAddr];
         require(userBuyingNums < whitelist.buyLimit, "buying limit");
 
+        // todo
         // decode permit sig and call erc20 permit to verify sig
-        //good memory wantedNft= goods[whitelist.nftAddr][tokenId];
-        //IERC20Permit itoken = IERC20Permit(address(wantedNft.currency));
-        //itoken.permit(msg.sender, address(this), wantedNft.price, whitelist.deadline, pv, pr, ps); // do approve here
+        // good memory wantedNft= goods[whitelist.nftAddr][tokenId];
+        // IERC20Permit itoken = IERC20Permit(address(wantedNft.currency));
+        // itoken.permit(msg.sender, address(this), wantedNft.price, whitelist.deadline, pv, pr, ps); // do approve here
 
         bool success = buyNFT(whitelist.user, whitelist.nftAddr, tokenId);
         require(success, "failed to buy NFT");
