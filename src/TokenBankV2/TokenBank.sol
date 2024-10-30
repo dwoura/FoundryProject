@@ -15,8 +15,8 @@ contract TokenBank is IBank {
 
     event Deposit(address indexed user, uint256 amount);
     event Withdraw(address indexed user, uint256 amount);
-    constructor(){
-        owner = msg.sender;
+    constructor(address owner_){
+        owner = owner_;
     }
 
     receive () external payable{}

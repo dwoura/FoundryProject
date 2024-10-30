@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract MyPermitToken is IERC20, ERC20Permit{
 
+
     // eip712 necessary   or using _hashTypedDataV4 in eip712.sol
     struct EIP712Domain {
         string name;
@@ -26,8 +27,8 @@ contract MyPermitToken is IERC20, ERC20Permit{
         uint256 deadline;
     }
 
-    constructor() ERC20("DwouraPermit","DwPmt") ERC20Permit("DwouraPermit"){
-        _mint(msg.sender, 1000000000 ether);
+    constructor(address receiver) ERC20("DwouraPermit","DwPmt") ERC20Permit("DwouraPermit"){
+        _mint(receiver, 1000000000 ether);
     }
 
     // inherent DOMAIN_SEPARATOR() could be used.

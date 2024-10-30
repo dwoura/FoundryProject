@@ -6,7 +6,7 @@ import {NFTMarket} from "src/NFTMarket/NFTMarket.sol";
 import {MyERC721} from "src/NFTMarket/ERC721.sol";
 import {ERC20Hook} from "src/NFTMarket/ERC20Hook.sol";
 import "forge-std/console.sol";
-contract NFTMarketTest is NFTMarket,Test {
+contract NFTMarketTest is NFTMarket, Test {
     NFTMarket nftMarket;
     MyERC721 erc721;
     ERC20Hook erc20Hook;
@@ -45,21 +45,26 @@ contract NFTMarketTest is NFTMarket,Test {
     //         erc721.approve(address(nftMarket),i);
     //     }
     //     vm.stopPrank();
-        
+
     // }
 
     function test_ListSuccess() public {
         vm.startPrank(seller);
         erc721.mint(seller, "seller");
         // 模拟 approve NFT
-        erc721.approve(address(nftMarket),testNftId);
+        erc721.approve(address(nftMarket), testNftId);
 
         // expectEmit 设置期望的上架事件
         vm.expectEmit(true, true, true, true);
         emit List(seller, nftAddr, testNftId, erc20HookAddr, testPrice, 0);
 
         // 4. 执行上架操作
-        bool success = nftMarket.list(nftAddr, testNftId, erc20HookAddr, testPrice);
+        bool success = nftMarket.list(
+            nftAddr,
+            testNftId,
+            erc20HookAddr,
+            testPrice
+        );
 
         // 5. 断言操作成功
         assertTrue(success);
@@ -68,9 +73,9 @@ contract NFTMarketTest is NFTMarket,Test {
         good memory listedNFT = nftMarket.getGoodInfo(nftAddr, testNftId);
         vm.stopPrank();
 
-        assertEq(listedNFT.seller, seller,"not the same seller");
-        assertEq(listedNFT.price, testPrice,"not the same price");
-        assertEq(listedNFT.isListing, true,"not listing");
+        assertEq(listedNFT.seller, seller, "not the same seller");
+        assertEq(listedNFT.price, testPrice, "not the same price");
+        assertEq(listedNFT.isListing, true, "not listing");
     }
 
     function test_ListNFTFailsForZeroPrice() public {
@@ -97,17 +102,17 @@ contract NFTMarketTest is NFTMarket,Test {
         // seller上架nft
         vm.startPrank(seller);
         erc721.mint(seller, "seller");
-        erc721.approve(nftMarketAddr,testNftId);
+        erc721.approve(nftMarketAddr, testNftId);
         nftMarket.list(nftAddr, testNftId, erc20HookAddr, testPrice);
         vm.stopPrank();
 
         // buyer购买
         vm.startPrank(buyer);
-        
+
         vm.expectEmit(true, true, true, true);
         emit Sold(buyer, nftAddr, testNftId, seller, erc20HookAddr, testPrice);
 
-        bytes memory data = abi.encode(nftAddr,testNftId);
+        bytes memory data = abi.encode(nftAddr, testNftId);
         erc20Hook.transferWithCallback(nftMarketAddr, testPrice, data); // 假设发送了正好足够的token
 
         vm.stopPrank();
@@ -117,7 +122,7 @@ contract NFTMarketTest is NFTMarket,Test {
     function test_BuyOwnNFTFail() public {
         vm.startPrank(seller);
         erc721.mint(seller, "seller");
-        erc721.approve(nftMarketAddr,testNftId);
+        erc721.approve(nftMarketAddr, testNftId);
         nftMarket.list(nftAddr, testNftId, erc20HookAddr, testPrice);
 
         // 尝试自己购买自己的NFT
@@ -132,13 +137,13 @@ contract NFTMarketTest is NFTMarket,Test {
         // seller上架nft
         vm.startPrank(seller);
         erc721.mint(seller, "seller");
-        erc721.approve(nftMarketAddr,testNftId);
+        erc721.approve(nftMarketAddr, testNftId);
         nftMarket.list(nftAddr, testNftId, erc20HookAddr, testPrice);
         vm.stopPrank();
 
         // buyer给了过多token
         vm.startPrank(buyer);
-        deal(erc20HookAddr,buyer, testPrice + 10);
+        deal(erc20HookAddr, buyer, testPrice + 10);
         erc20Hook.approve(nftMarketAddr, testPrice + 10);
         // 不会revert，购买逻辑中支持超出部分不转走。
         // 事件断言
@@ -155,13 +160,13 @@ contract NFTMarketTest is NFTMarket,Test {
         // seller上架nft
         vm.startPrank(seller);
         erc721.mint(seller, "seller");
-        erc721.approve(nftMarketAddr,testNftId);
+        erc721.approve(nftMarketAddr, testNftId);
         nftMarket.list(nftAddr, testNftId, erc20HookAddr, testPrice);
         vm.stopPrank();
 
         // buyer支付的token数量不足
         vm.startPrank(buyer);
-        deal(erc20HookAddr,buyer, testPrice - 10);
+        deal(erc20HookAddr, buyer, testPrice - 10);
 
         vm.expectRevert("buyer has no enough erc20 or allowance");
         nftMarket.buyNFT(buyer, nftAddr, testNftId);
@@ -182,13 +187,13 @@ contract NFTMarketTest is NFTMarket,Test {
         // 卖家上架NFT
         vm.startPrank(seller);
         erc721.mint(seller, "seller");
-        erc721.approve(nftMarketAddr,testNftId);
+        erc721.approve(nftMarketAddr, testNftId);
         nftMarket.list(nftAddr, testNftId, erc20HookAddr, amount);
         vm.stopPrank();
 
         // 模拟买家进行购买
         vm.startPrank(randomBuyer);
-        deal(erc20HookAddr,randomBuyer, amount);
+        deal(erc20HookAddr, randomBuyer, amount);
         erc20Hook.approve(nftMarketAddr, amount);
 
         // 验证购买成功
@@ -203,16 +208,20 @@ contract NFTMarketTest is NFTMarket,Test {
         // 卖家上架NFT
         vm.startPrank(seller);
         erc721.mint(seller, "seller");
-        erc721.approve(nftMarketAddr,testNftId);
+        erc721.approve(nftMarketAddr, testNftId);
         nftMarket.list(nftAddr, testNftId, erc20HookAddr, testPrice);
         vm.stopPrank();
 
         // 模拟买家进行购买
         vm.startPrank(buyer);
-        deal(erc20HookAddr,buyer, testPrice);
+        deal(erc20HookAddr, buyer, testPrice);
         erc20Hook.approve(nftMarketAddr, testPrice);
         vm.stopPrank();
         // 验证 NFTMarket 合约内的 ERC20 代币余额为 0
-        assertEq(erc20Hook.balanceOf(nftMarketAddr), 0, "NFTMarket should not hold any tokens");
+        assertEq(
+            erc20Hook.balanceOf(nftMarketAddr),
+            0,
+            "NFTMarket should not hold any tokens"
+        );
     }
 }

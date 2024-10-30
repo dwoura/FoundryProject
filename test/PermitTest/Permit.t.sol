@@ -11,7 +11,7 @@ import {EIP712} from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import {NFTMarket} from "src/NFTMarket/NFTMarket.sol";
 import {MyERC721} from "src/NFTMarket/ERC721.sol";
 
-import {IPermit2,ISignatureTransfer} from "@uniswap/permit2/interfaces/IPermit2.sol";
+import {IPermit2, ISignatureTransfer} from "@uniswap/permit2/interfaces/IPermit2.sol";
 import {PermitHash} from "@uniswap/permit2/libraries/PermitHash.sol";
 
 contract PermitWhitelistTest is Test {
@@ -22,7 +22,7 @@ contract PermitWhitelistTest is Test {
 
     IERC20 ierc20;
     IERC20 itokenBank;
-    
+
     IPermit2 ipermit2;
 
     uint256 private developerPrivateKey;
@@ -30,7 +30,7 @@ contract PermitWhitelistTest is Test {
     uint256 private alicePrivateKey;
     address public alice; // nft buyer
     address public bob = makeAddr("bob"); // nft lister
-    
+
     struct Whitelist {
         address developer;
         address nftAddress;
@@ -47,8 +47,8 @@ contract PermitWhitelistTest is Test {
 
         // setup contract
         vm.startPrank(developer);
-        erc20 = new MyPermitToken();
-        tokenBank = new TokenBankV2(address(erc20));
+        erc20 = new MyPermitToken(developer);
+        tokenBank = new TokenBankV2(developer ,address(erc20));
         nftMarket = new NFTMarket();
         erc721 = new MyERC721();
         erc20.transfer(alice, 1000000); // prepare enough erc20 tokens
@@ -57,16 +57,17 @@ contract PermitWhitelistTest is Test {
         // setup interface
         ierc20 = IERC20(address(erc20));
         itokenBank = IERC20(address(tokenBank));
-        ipermit2 = IPermit2(address(0x000000000022D473030F116dDEE9F6B43aC78BA3)); // manually set your permit2 address
-        
+        ipermit2 = IPermit2(
+            address(0x000000000022D473030F116dDEE9F6B43aC78BA3)
+        ); // manually set your permit2 address
+
         // setup tokenBank init
         vm.prank(developer);
-        tokenBank.init(address(ipermit2));// init tokenBank to setup permit2 address
-        
+        tokenBank.init(address(ipermit2)); // init tokenBank to setup permit2 address
+
         //console.log("bbbbb",token.balanceOf(alice));
         vm.deal(alice, 1 ether);
         vm.deal(bob, 1 ether);
-        
     }
 
     function test_Deposit() public {
@@ -76,15 +77,13 @@ contract PermitWhitelistTest is Test {
         vm.startPrank(alice);
         ierc20.approve(address(tokenBank), amount);
         // 调用TokenBank的deposit函数
-        tokenBank.deposit(alice,ierc20,amount);
-        
+        tokenBank.deposit(alice, ierc20, amount);
+
         // 检查TokenBank合约的余额和用户的存款
         assertEq(erc20.balanceOf(address(tokenBank)), amount);
         assertEq(tokenBank.getBalancesOf(alice, ierc20), amount);
         vm.stopPrank();
     }
-
-
 
     function test_PermitDeposit_TokenBankV2() public {
         address depositor = alice;
@@ -92,85 +91,96 @@ contract PermitWhitelistTest is Test {
 
         uint256 amount = 100; // wanted amount
         uint256 nonce = erc20.nonces(alice);
-        console.log("nonce",nonce);
+        console.log("nonce", nonce);
         uint256 deadline = block.timestamp + 1 days;
 
         vm.startPrank(depositor);
         // make eip712 struct hash, and get eip712 digest
-        bytes32 permitStructHash = keccak256(abi.encode(
+        bytes32 permitStructHash = keccak256(
+            abi.encode(
                 erc20.getPermitTypehash(),
                 depositor,
                 address(tokenBank),
                 amount,
                 nonce,
                 deadline
-        ));
-        bytes32 digest = MessageHashUtils.toTypedDataHash(erc20.DOMAIN_SEPARATOR(), permitStructHash);
-        
+            )
+        );
+        bytes32 digest = MessageHashUtils.toTypedDataHash(
+            erc20.DOMAIN_SEPARATOR(),
+            permitStructHash
+        );
+
         // get v,r,s (3 parts of signature) from signed message
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(depositorPrivateKey, digest);
-        
 
         // deposit
-        tokenBank.permitDeposit(depositor, amount,deadline, v, r, s); // verify the first three args with signature v,r,s
-        
+        tokenBank.permitDeposit(depositor, amount, deadline, v, r, s); // verify the first three args with signature v,r,s
+
         assertEq(erc20.balanceOf(address(tokenBank)), amount);
         assertEq(tokenBank.getBalancesOf(depositor, ierc20), amount);
         vm.stopPrank();
     }
 
-    // new func: permit2 deposit test 
+    // new func: permit2 deposit test
     // Permit2 has been deployed on anvil, address: 0x000000000022D473030F116dDEE9F6B43aC78BA3
-    function test_DepositWithPermit2_TokenBankV2() public{
+    function test_DepositWithPermit2_TokenBankV2() public {
         address depositor = alice;
         uint depositorPrivateKey = alicePrivateKey;
 
-        uint256 amount = 100;   // wanted amount
+        uint256 amount = 100; // wanted amount
         uint256 nonce = 1;
         uint256 deadline = block.timestamp + 1 days;
 
         vm.startPrank(depositor);
 
-        // approve permit2 contract firstly 
+        // approve permit2 contract firstly
         // so that it can safeTransferFrom your tokens
         erc20.approve(address(ipermit2), type(uint256).max);
 
         // 1. pack permitMsgx
-        ISignatureTransfer.TokenPermissions memory tp = ISignatureTransfer.TokenPermissions({
-            token: address(erc20),
-            amount: amount
-        });
-        ISignatureTransfer.PermitTransferFrom memory permitMsg = ISignatureTransfer.PermitTransferFrom({
-            permitted: tp,
-            nonce: nonce,
-            deadline: deadline
-        });
+        ISignatureTransfer.TokenPermissions memory tp = ISignatureTransfer
+            .TokenPermissions({token: address(erc20), amount: amount});
+        ISignatureTransfer.PermitTransferFrom
+            memory permitMsg = ISignatureTransfer.PermitTransferFrom({
+                permitted: tp,
+                nonce: nonce,
+                deadline: deadline
+            });
 
         // 2. pack details
-        ISignatureTransfer.SignatureTransferDetails memory details = ISignatureTransfer.SignatureTransferDetails({
-            to: address(tokenBank),
-            requestedAmount: amount
-        });
+        ISignatureTransfer.SignatureTransferDetails
+            memory details = ISignatureTransfer.SignatureTransferDetails({
+                to: address(tokenBank),
+                requestedAmount: amount
+            });
 
         // 3. to get user's signature, make eip712 struct hash, and get eip712 digest
         // then user signs the msg.
         // todo: record this part, failed too many times.
-        bytes32 permitStructHash = keccak256(abi.encode(
+        bytes32 permitStructHash = keccak256(
+            abi.encode(
                 PermitHash._PERMIT_TRANSFER_FROM_TYPEHASH,
-                    keccak256(abi.encode(
+                keccak256(
+                    abi.encode(
                         PermitHash._TOKEN_PERMISSIONS_TYPEHASH,
                         tp.token,
                         tp.amount
-                    )), // tips: The nested struct also needs to be hashed.
+                    )
+                ), // tips: The nested struct also needs to be hashed.
                 address(tokenBank),
                 nonce,
                 deadline
-        ));
-        bytes32 digest = MessageHashUtils.toTypedDataHash(ipermit2.DOMAIN_SEPARATOR(), permitStructHash);
+            )
+        );
+        bytes32 digest = MessageHashUtils.toTypedDataHash(
+            ipermit2.DOMAIN_SEPARATOR(),
+            permitStructHash
+        );
         // get v,r,s (3 parts of signature) from signed message
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(depositorPrivateKey, digest);
         bytes memory signature = abi.encodePacked(r, s, v);
-        
+
         tokenBank.depositWithPermit2(depositor, permitMsg, details, signature);
 
         assertEq(erc20.balanceOf(address(tokenBank)), amount);
@@ -178,9 +188,8 @@ contract PermitWhitelistTest is Test {
         vm.stopPrank();
     }
 
-
     function test_PermitBuy_NFTMarket(uint256 price) public {
-        vm.assume(price> 0&& price <= 10000);
+        vm.assume(price > 0 && price <= 10000);
 
         address seller = bob;
         uint256 balancesOfSellerBefore = erc20.balanceOf(seller);
@@ -188,7 +197,7 @@ contract PermitWhitelistTest is Test {
         //uint256 byerPrivateKey = alicePrivateKey;
 
         uint buyLimit = 2;
-        
+
         vm.startPrank(seller);
         // mint and list on market
         uint tokenId = erc721.mint(seller, "url");
@@ -200,7 +209,8 @@ contract PermitWhitelistTest is Test {
         // 1. developer check if buyer is in whitelist
         // 2. then developer sign msg
         uint256 deadline = block.timestamp + 1 days;
-        bytes32 wlDigest = MessageHashUtils.toTypedDataHash(nftMarket.getDomainSeparator(), 
+        bytes32 wlDigest = MessageHashUtils.toTypedDataHash(
+            nftMarket.getDomainSeparator(),
             keccak256(
                 abi.encode(
                     nftMarket.getWhiteListTypeHash(),
@@ -212,14 +222,17 @@ contract PermitWhitelistTest is Test {
             )
         );
 
-        (uint8 v,bytes32 r,bytes32 s) = vm.sign(developerPrivateKey, wlDigest);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
+            developerPrivateKey,
+            wlDigest
+        );
         //bytes32 whiteListSig = abi.encodePacked(r,s,v);
         vm.stopPrank();
 
         vm.startPrank(buyer);
         // buyer alice call permitBuy
         // buyer sign permit
-        // bytes32 permitDigest = MessageHashUtils.toTypedDataHash(erc20.DOMAIN_SEPARATOR(), 
+        // bytes32 permitDigest = MessageHashUtils.toTypedDataHash(erc20.DOMAIN_SEPARATOR(),
         //     keccak256(
         //         abi.encode(
         //             erc20.getPermitTypehash(),
@@ -234,13 +247,17 @@ contract PermitWhitelistTest is Test {
         // bytes permitSig = abi.encodePacked(pr,ps,pv);
         erc20.approve(address(nftMarket), price);
 
-        NFTMarket.WhiteList memory wl = NFTMarket.WhiteList(buyer, address(erc721), buyLimit, deadline); // pack whiteList data that get from web
-        
-        nftMarket.permitBuy(tokenId, wl,v,r,s);
+        NFTMarket.WhiteList memory wl = NFTMarket.WhiteList(
+            buyer,
+            address(erc721),
+            buyLimit,
+            deadline
+        ); // pack whiteList data that get from web
+
+        nftMarket.permitBuy(tokenId, wl, v, r, s);
         vm.stopPrank();
 
         assertEq(erc20.balanceOf(seller), balancesOfSellerBefore + price);
         assertEq(erc721.ownerOf(tokenId), buyer);
     }
-    
 }

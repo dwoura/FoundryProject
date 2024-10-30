@@ -15,7 +15,7 @@ contract TokenBankV2 is TokenBank,ITokenReceiver {
 
     // 指定 permit2 合约
     address public _supportedPemit2;
-    constructor(address supportedToken_) {
+    constructor(address owner_, address supportedToken_) TokenBank(owner_){
         _supportedToken = supportedToken_;
     }
 
