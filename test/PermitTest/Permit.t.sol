@@ -4,7 +4,7 @@ pragma solidity ^0.8.26;
 import {Test, console} from "forge-std/Test.sol";
 import {MyPermitToken} from "src/PermitWhitelist/MyPermitToken.sol";
 import {IERC20} from "src/TokenBankV2/IERC20.sol";
-import "forge-std/console.sol";
+//import "forge-std/console.sol";
 import {TokenBankV2} from "src/TokenBankV2/TokenBankV2.sol";
 import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 import {EIP712} from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
@@ -138,7 +138,7 @@ contract PermitWhitelistTest is Test {
         // so that it can safeTransferFrom your tokens
         erc20.approve(address(ipermit2), type(uint256).max);
 
-        // 1. pack permitMsgx
+        // 1. pack permitMsg, which is used for call function
         ISignatureTransfer.TokenPermissions memory tp = ISignatureTransfer
             .TokenPermissions({token: address(erc20), amount: amount});
         ISignatureTransfer.PermitTransferFrom
@@ -148,15 +148,16 @@ contract PermitWhitelistTest is Test {
                 deadline: deadline
             });
 
-        // 2. pack details
+        // 2. pack details, which is used for call function
         ISignatureTransfer.SignatureTransferDetails
             memory details = ISignatureTransfer.SignatureTransferDetails({
                 to: address(tokenBank),
                 requestedAmount: amount
             });
 
-        // 3. to get user's signature, make eip712 struct hash, and get eip712 digest
-        // then user signs the msg.
+        // 3. pack message, which is used for signing containing eip712 domain.
+        // to get user's signature, make eip712 struct hash, and get eip712 digest
+        // then user signs the msg which is used for signed message details display of wallet.
         // todo: record this part, failed too many times.
         bytes32 permitStructHash = keccak256(
             abi.encode(

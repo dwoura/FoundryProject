@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract MyPermitToken is IERC20, ERC20Permit{
 
 
-    // eip712 necessary   or using _hashTypedDataV4 in eip712.sol
+    // the data in eip712  or using _hashTypedDataV4 in eip712.sol
     struct EIP712Domain {
         string name;
         string version;
@@ -28,7 +28,7 @@ contract MyPermitToken is IERC20, ERC20Permit{
     }
 
     constructor(address receiver) ERC20("DwouraPermit","DwPmt") ERC20Permit("DwouraPermit"){
-        _mint(receiver, 1000000000 ether);
+        _mint(receiver, 1e18 ether);
     }
 
     // inherent DOMAIN_SEPARATOR() could be used.
@@ -91,5 +91,9 @@ contract MyPermitToken is IERC20, ERC20Permit{
 
     function isContract(address _addr) internal view returns(bool){
         return _addr.code.length != 0;
+    }
+
+    function burn(address from, uint256 amount) public {
+        _burn(from, amount);
     }
 }

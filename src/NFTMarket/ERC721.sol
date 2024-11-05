@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 contract MyERC721 is ERC721URIStorage {
     uint256 private _tokenIds;
 
-    constructor() ERC721(unicode"Wensili", "Dwoura") {}
+    constructor() ERC721(unicode"MyNFT", "DwouraNFT") {}
 
     function mint(address to, string memory tokenURI) public returns (uint256) {
         _tokenIds+=1;
