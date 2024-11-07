@@ -1,0 +1,65 @@
+== Logs ==
+  logicV1 Deployed: 0x54aa113F26E08A1F3693069307ED4E2855Dbf737
+  logicV2 Deployed: 0xec67950f9617B4aD30E2e965C966A78F47D2061D
+  proxy Deployed: 0xe1C68E98B287b2a58c360C0461AB64a384894CB5
+  proxyAdmin Deployed: 0x870B05910688E707C975Ee6f45CF0a152EDE9139
+  inscriptionV1 Deployed: 0xd049e09cB5093B4b78bAD4278F2A66872aa29f8a
+  inscriptionV2 Deployed: 0xb263d270DC995EE8AA130c87992b8190d9125C64
+
+##### sepolia
+✅  [Success]Hash: 0xa2c07ac084992f33296a145efdbd63383fbe61c708440a5d96b1babd95a2dd09
+Block: 7028839
+Paid: 0.021730869991409445 ETH (1127013 gas * 19.281827265 gwei)
+
+
+##### sepolia
+✅  [Success]Hash: 0x7db9651eb85661992254b238f9776932227d9470a707dd9a0e9ac7aefab4b9b4
+Block: 7028840
+Paid: 0.012625304923933441 ETH (630193 gas * 20.034029137 gwei)
+
+
+##### sepolia
+✅  [Success]Hash: 0x02507d3ed15df415bd582b205770e5e766b61dbbbcf16a351e6005663be7e3ed
+Block: 7028841
+Paid: 0.01348009366313043 ETH (716310 gas * 18.818798653 gwei)
+
+
+##### sepolia
+✅  [Success]Hash: 0xe51b04eb7984b147fbd51fb8ef489f56e3bf506a580b712ab503d2e621c12e8e
+Block: 7028842
+Paid: 0.017917575791417775 ETH (931755 gas * 19.229921805 gwei)
+
+
+##### sepolia
+✅  [Success]Hash: 0x0a4cdc33fe244bc7baa24cfb9f7ea1f433af525fb338022551bc40d821e2856f
+Block: 7028843
+Paid: 0.001663787591040234 ETH (85177 gas * 19.533296442 gwei)
+
+
+##### sepolia
+✅  [Success]Hash: 0xc4e83eccb64291a49b284c9e6568bf039bfe9e953115569b0c8304c7bc4a3811
+Block: 7028844
+Paid: 0.00203747341756795 ETH (107566 gas * 18.941611825 gwei)
+
+
+##### sepolia
+✅  [Success]Hash: 0xdd569202ec66cf05c81eb818eb2cdc41d29020f0e63e3fb66b0d5047a1a98d2f
+Block: 7028845
+Paid: 0.004388193482839824 ETH (238182 gas * 18.423699032 gwei)
+
+
+##### sepolia
+✅  [Success]Hash: 0xa2fc99f655d3bf46a364b851473db8ef966abd9e595e98bdcfccc1211e78a724
+Block: 7028846
+Paid: 0.002081608391166948 ETH (107793 gas * 19.311164836 gwei)
+
+✅ Sequence #1 on sepolia | Total Paid: 0.075924907252506047 ETH (3943989 gas * avg 19.196793624 gwei)
+                                                                                                                                                                                     
+
+==========================
+
+ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
+
+Transactions saved to: /Users/dwoura/Desktop/Code/学习/FoundryProject/broadcast/InscriptionFactoryProxy.s.sol/11155111/run-latest.json
+
+Sensitive values saved to: /Users/dwoura/Desktop/Code/学习/FoundryProject/cache/InscriptionFactoryProxy.s.sol/11155111/run-latest.json

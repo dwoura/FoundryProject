@@ -1,0 +1,109 @@
+== Logs ==
+  logicV1 Deployed: 0x98Ee3128f4a761D35bDbED8BF3B9ef1655a2dd25
+  logicV2 Deployed: 0xfF85BBcd98A410FB3Bf1148A474F5a67621a788d
+  proxy Deployed: 0x49c45dFFD9c839ffDe3ebEf167d62c752ef06CA8
+  proxyAdmin Deployed: 0x2E4C010ddf9a139267F27A7f9B0Ba6B41cAc4d61
+  inscriptionV1 Deployed: 0x9cD14d261A3F47961A6b92B4C78663CC4b68b449
+  inscriptionV2 Deployed: 0x9F326bB1068B2dD7cBc2ee3A7737aBC29BBB06Ad
+
+##### sepolia
+✅  [Success]Hash: 0x44484bff99ac15e4e4a2d94a7211acce40eb4959cb9fd7da1acf3b5e0d411659
+Block: 7028892
+Paid: 0.020342664987994692 ETH (1127013 gas * 18.050071284 gwei)
+
+
+##### sepolia
+✅  [Success]Hash: 0xcbbb32da4477d4e192675422264189a6769d23776c92085e845e6a85ce123ecf
+Block: 7028893
+Paid: 0.012104184666498236 ETH (630193 gas * 19.207107452 gwei)
+
+
+##### sepolia
+✅  [Success]Hash: 0xc5ee966cd87f2b3da950d3060d2c008de983adde85ffa92ea1e45379a1173d32
+Block: 7028894
+Paid: 0.0137601641949723 ETH (716310 gas * 19.20978933 gwei)
+
+
+##### sepolia
+✅  [Success]Hash: 0x0358a45b11e91405569a26ab44b3feeed9a748cafd86d0977f15a1e2cb62cbf7
+Block: 7028895
+Paid: 0.0190971169408734 ETH (931755 gas * 20.49585668 gwei)
+
+
+##### sepolia
+✅  [Success]Hash: 0x658fcf254e1dba05623d57edac8bb24bb973ff1fe3c08bc5937b4e2ed52cbfc4
+Block: 7028896
+Paid: 0.001735455475825849 ETH (85177 gas * 20.374695937 gwei)
+
+
+##### sepolia
+✅  [Success]Hash: 0x667cf8f106adf1fe9ade181c67c097c8cd1138a443308b52ca69495cdfc0fc96
+Block: 7028897
+Paid: 0.002265792034297292 ETH (107566 gas * 21.064202762 gwei)
+
+
+##### sepolia
+✅  [Success]Hash: 0xb7159447105993dc2bbd7a6e619d2a608742ab781914a92c3d1d6d2ffea6a4c4
+Block: 7028898
+Paid: 0.004766675753921004 ETH (238182 gas * 20.012745522 gwei)
+
+
+##### sepolia
+✅  [Success]Hash: 0xe4b73b83bda34e80c8eff01596d6221afb2995aa89c1cf5915c612f50f6c150d
+Block: 7028899
+Paid: 0.002217561673096665 ETH (107793 gas * 20.572408905 gwei)
+
+✅ Sequence #1 on sepolia | Total Paid: 0.076289615727479438 ETH (3943989 gas * avg 19.873359734 gwei)
+
+==========================
+
+ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
+##
+Start verification for (3) contracts
+Start verifying contract `0x98Ee3128f4a761D35bDbED8BF3B9ef1655a2dd25` deployed on sepolia
+
+Submitting verification for [src/UpgradeableAndMinimalProxy/InscriptionFactory/InscriptionFactoryLogicV1.sol:InscriptionFactoryLogicV1] 0x98Ee3128f4a761D35bDbED8BF3B9ef1655a2dd25.
+Submitted contract for verification:
+        Response: `OK`
+        GUID: `dncbhnaae895kahwkexcgqxqpuzilmrlygtxwtxv1imyffdh4s`
+        URL: https://sepolia.etherscan.io/address/0x98ee3128f4a761d35bdbed8bf3b9ef1655a2dd25
+Contract verification status:
+Response: `NOTOK`
+Details: `Pending in queue`
+Contract verification status:
+Response: `OK`
+Details: `Pass - Verified`
+Contract successfully verified
+Start verifying contract `0xfF85BBcd98A410FB3Bf1148A474F5a67621a788d` deployed on sepolia
+
+Submitting verification for [src/UpgradeableAndMinimalProxy/InscriptionFactory/InscriptionFactoryLogicV2.sol:InscriptionFactoryLogicV2] 0xfF85BBcd98A410FB3Bf1148A474F5a67621a788d.
+Submitted contract for verification:
+        Response: `OK`
+        GUID: `8azksdk5cykhbdxxc3kshn7d3hv8itt9ih27gjut4cypjqyidb`
+        URL: https://sepolia.etherscan.io/address/0xff85bbcd98a410fb3bf1148a474f5a67621a788d
+Contract verification status:
+Response: `NOTOK`
+Details: `Pending in queue`
+Contract verification status:
+Response: `OK`
+Details: `Pass - Verified`
+Contract successfully verified
+Start verifying contract `0x49c45dFFD9c839ffDe3ebEf167d62c752ef06CA8` deployed on sepolia
+
+Submitting verification for [src/UpgradeableAndMinimalProxy/InscriptionFactory/InscriptionFactoryProxy.sol:InscriptionFactoryProxy] 0x49c45dFFD9c839ffDe3ebEf167d62c752ef06CA8.
+Submitted contract for verification:
+        Response: `OK`
+        GUID: `xszqbk4mh9idmj5bawcrfs9sn6fhuekcw7vbbsvg3w3kbspnki`
+        URL: https://sepolia.etherscan.io/address/0x49c45dffd9c839ffde3ebef167d62c752ef06ca8
+Contract verification status:
+Response: `NOTOK`
+Details: `Pending in queue`
+Contract verification status:
+Response: `OK`
+Details: `Pass - Verified`
+Contract successfully verified
+All (3) contracts were verified!
+
+Transactions saved to: /Users/dwoura/Desktop/Code/学习/FoundryProject/broadcast/InscriptionFactoryProxy.s.sol/11155111/run-latest.json
+
+Sensitive values saved to: /Users/dwoura/Desktop/Code/学习/FoundryProject/cache/InscriptionFactoryProxy.s.sol/11155111/run-latest.json
