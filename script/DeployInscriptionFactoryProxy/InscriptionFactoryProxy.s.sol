@@ -76,6 +76,5 @@ contract Deploy is Script {
         assert(inscV2.balanceOf(user) == 1000);
         uint256 ethNow = dev.balance;
         assert(ethNow - ethBefore == MINT_FEE);
-
     }
 }
