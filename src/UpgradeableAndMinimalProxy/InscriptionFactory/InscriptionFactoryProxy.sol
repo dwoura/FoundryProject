@@ -2,6 +2,7 @@
 pragma solidity ^0.8.26;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ITransparentUpgradeableProxy,TransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+// todo: 实际产品中，最好直接使用 Founry 升级插件做升级部署。 
 contract InscriptionFactoryProxy is TransparentUpgradeableProxy{
     address[] public inscriptionAddresses; // slot0 inscriptionAddresses
     // slot1 inscriptionTemplate

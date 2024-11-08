@@ -35,7 +35,7 @@ contract LinkedListBank{
             _addUser(user);
             return;
         }
-        _balances[user] = msg.value;
+        _balances[user] += msg.value;
     }
 
     // function withdraw(address user, uint256 amount) public {
@@ -52,7 +52,7 @@ contract LinkedListBank{
 
     function _addUser(address user) internal{
         address p = GUARD;
-        while(_balances[p] < _balances[_nextUsers[p]]){
+        while(_balances[p] > _balances[_nextUsers[p]]){
             p = _nextUsers[p];
         }
         if(_nextUsers[p]==GUARD){

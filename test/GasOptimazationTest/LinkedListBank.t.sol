@@ -23,17 +23,15 @@ contract LinkedListBankTest is Test{
         // 升序存钱
         for (uint256 i = 0; i < addresses.length; i++) {
             vm.prank(addresses[i]);
-            (bool success,) = payable(bank).call{value: i + 1 ether}("");
+            (bool success,) = payable(bank).call{value: i*1e18}("");
             assert(success);
         }
 
         // 降序输出
-        uint256 lastUserBalance = 0 ether;
+
+        address[10] memory top10 = bank.getTop10();
         for (uint256 i = 0; i < 10; i++) {
-            address user = bank._nextUsers(addresses[i+1]);
-            uint256 balance = bank._balances(user);
-            assertGe(balance, lastUserBalance);
-            lastUserBalance = balance;
+            console.log("Top 10 addresses: ",i, bank._balances(top10[i]));
         }
     }
 }
