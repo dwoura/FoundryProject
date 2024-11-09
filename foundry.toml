@@ -3,9 +3,14 @@ src = "src"
 out = "out"
 libs = ["lib"]
 solc = "0.8.26"
+ast = true
+ffi = true
+build_info = true
+extra_output = ["storageLayout"]
 
 [rpc_endpoints]
-sepolia = "https://eth-sepolia.g.alchemy.com/v2/ozWVNCbqDXI4BIRxUQtKjpNkJpU1Iy8w"
+sepolia = "https://rpc.ankr.com/eth_sepolia"
+xxxxsepolia = "https://eth-sepolia.g.alchemy.com/v2/ozWVNCbqDXI4BIRxUQtKjpNkJpU1Iy8w"
 anvil = "http://localhost:8545"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
