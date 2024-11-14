@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.26;
-
 interface IDex {
 
     /**
@@ -9,7 +8,7 @@ interface IDex {
      * @param buyToken 兑换的目标代币地址
      * @param minBuyAmount 要求最低兑换到的 buyToken 数量
      */
-    function sellETH(address buyToken,uint256 minBuyAmount) external payable  
+    function sellETH(address buyToken,uint256 minBuyAmount) external payable;
 
     /**
      * @dev 买入ETH，用 sellToken 兑换
@@ -17,5 +16,5 @@ interface IDex {
      * @param sellAmount 出售的代币数量
      * @param minBuyAmount 要求最低兑换到的ETH数量
      */
-    function buyETH(address sellToken,uint256 sellAmount,uint256 minBuyAmount) external   
+    function buyETH(address sellToken,uint256 sellAmount,uint256 minBuyAmount) external;   
 }

@@ -9,5 +9,6 @@ openzeppelin-contracts/=lib/openzeppelin-contracts/
 
 
 @std/=lib/forge-std/src/
-@uniswap/permit2=lib/permit2/src
+@uniswap/permit2/=lib/permit2/src/
+@uniswap/v2-core/=lib/uniswap/v2-core/
 @chainlink/=lib/chainlink-brownie-contracts/
