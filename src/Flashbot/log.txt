@@ -1,0 +1,95 @@
+Deployer: 0xEe44CF3ad948F4edD816E26582b7d6cB910e0901
+Deployed to: 0x0E033e49221D9B81bFa2beC2633d2cf6b51702A6
+Transaction hash: 0xa5670c95564c36beb258adf726ca6adc154b0cb1fdcf5b487f3a45f281fffa47
+
+Bundle transactions: [
+  {
+    "signer": {
+      "provider": {},
+      "address": "0xEe44CF3ad948F4edD816E26582b7d6cB910e0901"
+    },
+    "transaction": {
+      "to": "0x0E033e49221D9B81bFa2beC2633d2cf6b51702A6",
+      "data": "0xa8eac492",
+      "chainId": 11155111,
+      "gasLimit": 100000,
+      "maxFeePerGas": "10000000000",
+      "maxPriorityFeePerGas": "2000000000",
+      "type": 2
+    }
+  },
+  {
+    "signer": {
+      "provider": {},
+      "address": "0x477B4E8DC986B2e7f67B2c0940f82dD04Eac11FF"
+    },
+    "transaction": {
+      "to": "0x0E033e49221D9B81bFa2beC2633d2cf6b51702A6",
+      "data": "0xe6ab14340000000000000000000000000000000000000000000000000000000000000002",
+      "chainId": 11155111,
+      "gasLimit": 500000,
+      "maxFeePerGas": "10000000000",
+      "maxPriorityFeePerGas": "2000000000",
+      "value": "20000000000000000",
+      "type": 2
+    }
+  }
+]
+Simulation results: {
+  "bundleGasPrice": "2000000000",
+  "bundleHash": "0x7f6d6a7eea6c7bfa706eb19c07cd9e16d4af46e0b79d160b5aac2438af51a59b",
+  "coinbaseDiff": "256156000000000",
+  "ethSentToCoinbase": "0",
+  "gasFees": "256156000000000",
+  "results": [
+    {
+      "txHash": "0xcd6fb31252f4586ffe2d3a721b0a492e568f8ff4bf42bd3368c0d74ff6207600",
+      "gasUsed": 26430,
+      "gasPrice": "2000000000",
+      "gasFees": "52860000000000",
+      "fromAddress": "0xEe44CF3ad948F4edD816E26582b7d6cB910e0901",
+      "toAddress": "0x0E033e49221D9B81bFa2beC2633d2cf6b51702A6",
+      "coinbaseDiff": "52860000000000",
+      "ethSentToCoinbase": "0",
+      "value": "0x"
+    },
+    {
+      "txHash": "0x0e8d6948a57522a3de5d68e8074a80cdd2879d37494b1a7959b5247135ad9c28",
+      "gasUsed": 101648,
+      "gasPrice": "2000000000",
+      "gasFees": "203296000000000",
+      "fromAddress": "0x477B4E8DC986B2e7f67B2c0940f82dD04Eac11FF",
+      "toAddress": "0x0E033e49221D9B81bFa2beC2633d2cf6b51702A6",
+      "coinbaseDiff": "203296000000000",
+      "ethSentToCoinbase": "0",
+      "value": "0x"
+    }
+  ],
+  "stateBlockNumber": 7096364,
+  "totalGasUsed": 128078
+}
+Bundle response: {
+  "bundleTransactions": [
+    {
+      "signedTransaction": "0x02f87383aa36a75484773594008502540be400830186a0940e033e49221d9b81bfa2bec2633d2cf6b51702a68084a8eac492c001a06d3f24522b88673d29ef6a6cb68f68917cb62b711c23691c7326f2e109d5c1d5a0345c0b120f370ed6ad66841ff54c4a281fc31c816059e8d7ae5f4862b7a91190",
+      "hash": "0xcd6fb31252f4586ffe2d3a721b0a492e568f8ff4bf42bd3368c0d74ff6207600",
+      "account": "0xEe44CF3ad948F4edD816E26582b7d6cB910e0901",
+      "nonce": 84
+    },
+    {
+      "signedTransaction": "0x02f89a83aa36a71784773594008502540be4008307a120940e033e49221d9b81bfa2bec2633d2cf6b51702a687470de4df820000a4e6ab14340000000000000000000000000000000000000000000000000000000000000002c080a090c844db4a3d357cacf4b18fa1b0c666674bd75c370c6408e5a26b2697f4bddda035324bd9e35a6e71ee61975f65be7414f1b69421fedd8661b3bb27c0140512b1",
+      "hash": "0x0e8d6948a57522a3de5d68e8074a80cdd2879d37494b1a7959b5247135ad9c28",
+      "account": "0x477B4E8DC986B2e7f67B2c0940f82dD04Eac11FF",
+      "nonce": 23
+    }
+  ],
+  "bundleHash": "0x7f6d6a7eea6c7bfa706eb19c07cd9e16d4af46e0b79d160b5aac2438af51a59b"
+}
+
+Bundle stats: {
+  "isHighPriority": true,
+  "isSentToMiners": false,
+  "isSimulated": true,
+  "simulatedAt": "2024-11-17T15:27:22.018Z",
+  "submittedAt": "2024-11-17T15:27:22.005Z"
+}

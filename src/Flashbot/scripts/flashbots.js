@@ -82,8 +82,8 @@ async function main() {
           data: openspaceNFT.interface.encodeFunctionData("enablePresale"), // 项目方启动预售
           chainId: 11155111,
           gasLimit: 100000,
-          maxFeePerGas: ethers.parseUnits("10", "gwei"),
-          maxPriorityFeePerGas: ethers.parseUnits("2", "gwei"),
+          maxFeePerGas: ethers.parseUnits("50", "gwei"), // 10->50 确保矿工打包
+          maxPriorityFeePerGas: ethers.parseUnits("10", "gwei"), // 2->10
           type: 2, // EIP-1559 transaction
         },
       },
@@ -94,12 +94,26 @@ async function main() {
           data: openspaceNFT.interface.encodeFunctionData("presale",[2]), // 参与者参与预售，mint 2个
           chainId: 11155111,
           gasLimit: 500000, // 提高 gas 上限
-          maxFeePerGas: ethers.parseUnits("10", "gwei"),
-          maxPriorityFeePerGas: ethers.parseUnits("2", "gwei"),
+          maxFeePerGas: ethers.parseUnits("50", "gwei"),
+          maxPriorityFeePerGas: ethers.parseUnits("10", "gwei"),
           value: ethers.parseUnits("0.02", "ether"), // 注意携带 eth
           type: 2, // EIP-1559 transaction
         },
       },
+    // 贿赂矿工
+    //   {
+    //     // 向矿工支付贿赂
+    //     signer: wallet, // 付款人可以是任意账户
+    //     transaction: {
+    //       to: "0x0000000000000000000000000000000000000000", // 矿工的地址 (Coinbase 合约地址)
+    //       value: ethers.parseUnits("0.01", "ether"), // 贿赂金额，通常为 0.01 ETH 或更多
+    //       chainId: 11155111,
+    //       gasLimit: 21000, // 普通转账的最低 gas
+    //       maxFeePerGas: ethers.parseUnits("10", "gwei"),
+    //       maxPriorityFeePerGas: ethers.parseUnits("2", "gwei"),
+    //       type: 2, // EIP-1559 transaction
+    //     },
+    //   },
     ];
 
     // Helper function to convert BigNumbers to string
