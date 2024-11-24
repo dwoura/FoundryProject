@@ -10,6 +10,7 @@ extra_output = ["storageLayout"]
 
 [rpc_endpoints]
 sepolia = "https://rpc.ankr.com/eth_sepolia"
+mainnet = "https://rpc.ankr.com/eth/c2ff868c026e31d2682864e41723438ab24947724ed3b30977013731a05917a3"
 xxxxsepolia = "https://eth-sepolia.g.alchemy.com/v2/ozWVNCbqDXI4BIRxUQtKjpNkJpU1Iy8w"
 anvil = "http://localhost:8545"
 
